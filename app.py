@@ -51,16 +51,30 @@ if uploaded_files:
             for uploaded_file in uploaded_files:
                 with open(os.path.join(image_dir, uploaded_file.name), "wb") as f:
                     f.write(uploaded_file.getbuffer())
-                    st.success("Arquivos salvos com sucesso!")
+            
+            st.success("Arquivos salvos com sucesso!")
 
             with st.spinner("Processando as imagens, por favor aguarde..."):
                 try:
                     # Chama a funcao do modulo de processamento
-                    run_colmap_pipeline(image_dir=image_dir, workspace_dir=workspace_dir)
+                    result_path = run_colmap_pipeline(image_dir=image_dir, workspace_dir=workspace_dir)
 
-                    st.success("Processamento concluido com sucesso!")
-                    st.info("O 'esqueleto' 3D da cena foi gerado. A etapa de reconstrucao densa foi pulada")
-                    st.balloons()
+                    if result_path and os.path.exists(result_path):
+                        st.success("Reconstrucao ESPARSA concluida com sucesso!")
+                        st.info("O 'esqueleto' 3D da cena foi gerada em um arquivo PLY.")
+                        st.balloons()
+
+                        # Botao para download do arquivo PLY
+                        with open(result_path, "rb") as file:
+                            st.download_button(
+                                label="Baixar modelo 3D (PLY)",
+                                data=file,
+                                file_name="sparse_model.ply",
+                                mime="application/octet-stream"
+                            )
+                    else:
+                        st.error("O pipeline foi executado, mas o arquivo de modelo 3D nao foi gerado.")
+
                 except subprocess.CalledProcessError as e:
                     st.error(f"Ocorreu um erro durante o processamento: {e}")
                     st.code(e.stderr, language="bash")

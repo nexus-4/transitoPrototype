@@ -11,7 +11,7 @@ def run_colmap_pipeline(image_dir: str, workspace_dir: str):
     
     Returns:
         str: Caminho para a pasta de reconstrucao densa.
-"""
+    """
     print("Iniciando o pipeline do COLMAP...")
 
     # Definicao dos caminhos
@@ -47,6 +47,24 @@ def run_colmap_pipeline(image_dir: str, workspace_dir: str):
         "--output_path", sparse_dir
     ], check=True)
 
+    print("4. Convertendo o modelo esparso para o formato PLY...")
+    
+    input_sparse_model_dir = os.path.join(sparse_dir, "0")
+    output_ply_file        = os.path.join(workspace_dir, "sparse_model.ply")
+
+    # O resultado do mapper fica em workspace/sparse/0
+    if os.path.exists(input_sparse_model_dir):
+        subprocess.run([
+            "colmap", "model_converter",
+            "--input_path", input_sparse_model_dir,
+            "--output_path", output_ply_file,
+            "--output_type", "PLY"
+        ], check=True)
+        print(f'Modelo esparso salvo em {output_ply_file}.')
+    else:
+        print(f'Erro: Diretorio do modelo esparso nao encontrado em {input_sparse_model_dir}.')
+        return None
+
     ''''
 
         print("4. Desentortando as imagens para a reconstrucao densa...")
@@ -71,4 +89,4 @@ def run_colmap_pipeline(image_dir: str, workspace_dir: str):
     # print("Pipeline do COLMAP concluido com sucesso!")
     print("Pipeline de reconstrucao esparsa do COLMAP concluido com sucesso!")
     # return dense_dir
-    return sparse_dir
+    return output_ply_file
