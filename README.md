@@ -1,6 +1,6 @@
-# MVP Perícia de Trânsito – Reconstrução 3D com COLMAP
+# Reconstrução 3D com COLMAP
 
-Ferramenta simples (MVP) em **Streamlit** para gerar reconstrução 3D esparsa (nuvem de pontos inicial) a partir de um conjunto de fotos usando **COLMAP**.
+Ferramenta simples em **Streamlit** para gerar reconstrução 3D esparsa (nuvem de pontos inicial) a partir de um conjunto de fotos usando **COLMAP**.
 
 Atualmente o pipeline implementado gera apenas o **modelo esparso** (estrutura inicial). Você pode opcionalmente ativar a reconstrução **densa**, gerar um PLY mais completo e converter para **Potree** para visualização web, caso seu ambiente suporte (CUDA/NVIDIA recomendado para performance).
 
