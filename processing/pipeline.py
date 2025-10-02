@@ -17,11 +17,11 @@ def run_colmap_pipeline(image_dir: str, workspace_dir: str):
     # Definicao dos caminhos
     db_path    = os.path.join(workspace_dir, "database.db")
     sparse_dir = os.path.join(workspace_dir, "sparse")
-    dense_dir  = os.path.join(workspace_dir, "dense")
+    # dense_dir  = os.path.join(workspace_dir, "dense")
 
     # Garante que os diretorios de saida existam
     os.makedirs(sparse_dir, exist_ok=True)
-    os.makedirs(dense_dir, exist_ok=True)
+    # os.makedirs(dense_dir, exist_ok=True)
 
     # Execucao dos comandos do COLMAP
     # O argumento 'check=True' faz com que o script pare se algum comando falhar
@@ -47,21 +47,28 @@ def run_colmap_pipeline(image_dir: str, workspace_dir: str):
         "--output_path", sparse_dir
     ], check=True)
 
-    print("4. Reconstruindo a estrutura densa...")
-    subprocess.run([
-        "colmap", "image_undistorter",
-        "--image_path", image_dir,
-        "--input_path", os.path.join(sparse_dir, "0"),
-        "--output_path", dense_dir,
-        "--output_type", "COLMAP",
-    ], check=True)
+    ''''
 
-    print("5. Reconstrucao densa (patch_match_stereo)...")
-    subprocess.run([
-        "colmap", "patch_match_stereo",
-        "--workspace_path", dense_dir
-    ], check=True)
+        print("4. Desentortando as imagens para a reconstrucao densa...")
+        subprocess.run([
+            "colmap", "image_undistorter",
+            "--image_path", image_dir,
+            "--input_path", os.path.join(sparse_dir, "0"),
+            # "--output_path", dense_dir,
+            "--output_type", "COLMAP",
+        ], check=True)
 
-    print("Pipeline do COLMAP concluido com sucesso!")
+        
+        print("5. Reconstrucao densa (patch_match_stereo)...")
+        subprocess.run([
+            "colmap", "patch_match_stereo",
+            # "--workspace_path", dense_dir, 
+        ], check=True)
 
-    return dense_dir
+    '''
+    
+
+    # print("Pipeline do COLMAP concluido com sucesso!")
+    print("Pipeline de reconstrucao esparsa do COLMAP concluido com sucesso!")
+    # return dense_dir
+    return sparse_dir

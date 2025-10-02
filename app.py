@@ -1,4 +1,9 @@
 import streamlit as st
+import traceback
+import tempfile
+import subprocess
+from processing.pipeline import run_colmap_pipeline
+import os
 
 # Config da pagina
 
@@ -35,11 +40,32 @@ if uploaded_files:
 
     # Botao para iniciar o processamento
     if st.button("Iniciar Processamento", type="primary"):
+        # Diretorio temporario para gerenciar os arquivos do projeto
+        with tempfile.TemporaryDirectory() as temp_dir:
+            image_dir = os.path.join(temp_dir, "images")
+            workspace_dir = os.path.join(temp_dir, "workspace")
+            os.makedirs(image_dir, exist_ok=True)
+            os.makedirs(workspace_dir, exist_ok=True)
 
-        # Por enquanto, apenas exibimos uma mensagem de sucesso
-        # No futuro, aqui chamaremos a função do `pipeline.py`
-        with st.spinner("Iniciando o processo... (Etapa de placeholder)"):
-            st.success("Processo iniciado! (Em breve, a mágica acontecerá aqui).")
-            st.balloons() # Uma pequena comemoração!
+            # Salva os arquivos enviados no diretorio de imagens temporario
+            for uploaded_file in uploaded_files:
+                with open(os.path.join(image_dir, uploaded_file.name), "wb") as f:
+                    f.write(uploaded_file.getbuffer())
+                    st.success("Arquivos salvos com sucesso!")
+
+            with st.spinner("Processando as imagens, por favor aguarde..."):
+                try:
+                    # Chama a funcao do modulo de processamento
+                    run_colmap_pipeline(image_dir=image_dir, workspace_dir=workspace_dir)
+
+                    st.success("Processamento concluido com sucesso!")
+                    st.info("O 'esqueleto' 3D da cena foi gerado. A etapa de reconstrucao densa foi pulada")
+                    st.balloons()
+                except subprocess.CalledProcessError as e:
+                    st.error(f"Ocorreu um erro durante o processamento: {e}")
+                    st.code(e.stderr, language="bash")
+                except Exception as e:
+                    st.error(f"Ocorreu um erro inesperado: {e}")
+                    st.code(traceback.format_exc(), language="bash")
 else:
     st.warning("Aguardando o upload das imagens para continuar.")
