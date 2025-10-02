@@ -1,1 +1,7 @@
-streamlit
+## Dependencias Python do projeto
+# streamlit: interface web para o MVP
+streamlit>=1.38.0,<2.0.0
+
+## Observacao:
+# O pipeline depende do executavel externo 'colmap' instalado no sistema (nao e uma dependencia pip).
+# Certifique-se de ter o COLMAP instalado e acessivel no PATH.
