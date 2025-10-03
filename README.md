@@ -175,6 +175,3 @@ Defina aqui a licença (por exemplo MIT). *(Adapte conforme necessário.)*
 ---
 ## 🤝 Contribuições
 Pull requests e sugestões são bem-vindos.
-
----
-Se quiser, posso já aplicar as modificações no `pipeline.py` para ativar a reconstrução densa e/ou automatizar Potree. É só pedir.
